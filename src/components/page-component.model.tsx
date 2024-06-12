@@ -65,7 +65,6 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
   }
 
   function transformComponents(fetchedComps: BuilderContent[]): SFComponentOptions[] {
-    console.log(fetchedComps);
     let listOfComponents: SFComponentOptions[] = [];
     listOfComponents = fetchedComps.map((comp) => {
       const id = comp.data?.name ?? '';
