@@ -57,6 +57,7 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
     const fetchedComps = await apiService.getModels(url, user.authHeaders);
 
     const result = Array.isArray(fetchedComps.results) ? transformComponents(fetchedComps.results) : [];
+    console.log(result);
     dispatch({
       type: 'set_list_components',
       customPageComps: result,
@@ -64,11 +65,13 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
   }
 
   function transformComponents(fetchedComps: BuilderContent[]): SFComponentOptions[] {
+    console.log(fetchedComps);
     let listOfComponents: SFComponentOptions[] = [];
     listOfComponents = fetchedComps.map((comp) => {
       const id = comp.data?.name ?? '';
       const options = Object.keys(comp.data?.options ?? {});
-      return { id, options } as SFComponentOptions;
+      const title = comp.name ?? id;
+      return { id, options, title } as SFComponentOptions;
     });
     return listOfComponents;
   }
@@ -77,6 +80,7 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
     const newValue = {
       id: current.id,
       options: Object.keys(current.options),
+      title: current.title ?? current.id
     };
 
     return newValue;
@@ -126,7 +130,7 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
           onChange={handleChange}
         >
           {state.customPageComps.map((comp: SFComponentOptions) => (
-            <MenuItem value={comp.id}>{comp.id}</MenuItem>
+            <MenuItem value={comp.id}>{comp.title}</MenuItem>
           ))}
         </Select>
       </FormControl>

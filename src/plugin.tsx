@@ -1,5 +1,5 @@
 import { Builder } from '@builder.io/react';
-import { PageComponent } from './components/page-component.model';
+import { PageComponent } from './components/page-component.model'
 
 registerComponentFor();
 

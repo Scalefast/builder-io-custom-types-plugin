@@ -1,10 +1,14 @@
 {
-  "name": "test-plugin-builder",
-  "version": "1.0.0",
+  "name": "@scalefast/builder.io",
+  "version": "0.0.51",
   "description": "",
   "entry": "plugin",
   "output": "plugin.system.js",
   "main": "dist/plugin.system.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scalefast/builder-io-custom-types-plugin.git"
+  },
   "files": [
     "dist"
   ],
@@ -13,7 +17,8 @@
     "start": "webpack-dev-server --mode development",
     "format": "npm run format:fixall",
     "format:fix": "pretty-quick --staged",
-    "format:fixall": "prettier --write ."
+    "format:fixall": "prettier --write .",
+    "prebuild": "npm --no-git-tag-version version patch"
   },
   "author": "",
   "license": "ISC",
