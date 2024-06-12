@@ -1,0 +1,77 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+#NPM
+.npmrc
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+.nx/
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+/.nx/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Cypress files
+cypress/screenshots
+cypress/videos
+cypress/downloads
+cypress.env.json
+
+# Cache Files
+.mecachis/
+.scannerwork/
+
+# Generated documentation
+dist-docs/
+
+# Documentation Website
+doc-website/static/compodoc/
+doc-website/static/sassdoc/
+doc-website/docs/**/*.md
+doc-website/docs/*.md
+
+# CI only files
+
+# Generated build* scripts for deployment env templates (not used in dev)
+build.env.json
+
+# Build info for artifact builds (dev mode can mock it if it doesn't exist)
+build.meta.json
