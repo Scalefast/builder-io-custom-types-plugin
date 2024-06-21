@@ -4,6 +4,7 @@
   - [1. Overview](#1-overview)
   - [2. Context](#2-context)
   - [3. Development Test](#3-development-test)
+  - [4. Prod](#4-prod)
 
 ## 1. Overview
 
@@ -28,4 +29,10 @@ Add the following url:
 
 ```
 http://localhost:1268/plugin.system.js
+```
+
+## 4. Prod
+
+```
+https://cdn.jsdelivr.net/gh/scalefast/builder-io-custom-types-plugin@v0.0.1/dist/plugin.system.js
 ```
