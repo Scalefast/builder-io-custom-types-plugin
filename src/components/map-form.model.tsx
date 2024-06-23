@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import { useObserver } from 'mobx-react';
-import { Column, Row, Tag } from './utils';
+import { Column, Row } from './utils';
 import { Chip, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import { CustomMapOptions, CustomTypes } from '../interfaces/custom-map';
 import { useEffect, useState } from 'react';

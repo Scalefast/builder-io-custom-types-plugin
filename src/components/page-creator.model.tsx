@@ -2,19 +2,19 @@
 import { jsx } from '@emotion/core';
 import { CustomEditorProps } from '../interfaces/custom-editor';
 import { useObserver } from 'mobx-react';
-import { CenterRow } from './utils';
+import { CenterRow, Column } from './utils';
 import { BuilderContent } from '@builder.io/sdk';
 import { useEffect, useReducer } from 'react';
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
+import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import { SFComponent, SFComponentOptions, SFComponentState } from '../interfaces/page-components';
 import ApiService from '../services/api.service';
 import { CustomMapOptions } from '../interfaces/custom-map';
+import { FromType } from './form-comps.model';
 
 const actionMap: any = {
   'set_selected_component': (state: SFComponentState, action: any) => ({
     ...state,
     selectedComponent: action.selectedComponent,
-    selectedId: action.selectedId,
   }),
   'set_list_components': (state: SFComponentState, action: any) => ({
     ...state,
@@ -43,12 +43,10 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
   const apiService = new ApiService();
   const value = props.value ? props.value.toJSON() : undefined;
   const initialSelectedId = value ? value.id : '';
-  const initialSelectedComponent = undefined;
-  // const initialSelectedComponent = value ? transformCurrent(value) : undefined;
   const initialState = {
     currentValue: value,
     customPageComps: [],
-    selectedComponent: initialSelectedComponent,
+    selectedComponent: undefined,
     selectedId: initialSelectedId,
   } as SFComponentState;
 
@@ -63,12 +61,19 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
       type: 'set_list_components',
       customPageComps: result,
     });
+
+    if (state.selectedId) {
+      const selectedComponent = result.find((c) => c.id == state.selectedId);
+      dispatch({
+        type: 'set_selected_component',
+        selectedComponent: selectedComponent,
+      });
+    }
   }
 
   function transformComponents(fetchedComps: BuilderContent[]): SFComponentOptions[] {
     let listOfComponents: SFComponentOptions[] = [];
     listOfComponents = fetchedComps.map((comp) => {
-      debugger;
       const id = comp.data?.name ?? '';
       const options: CustomMapOptions[] = comp.data?.options ?? [];
       const title = comp.name ?? id;
@@ -77,20 +82,10 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
     return listOfComponents;
   }
 
-  // function transformCurrent(current: SFComponent): SFComponentOptions {
-  //   const newValue = {
-  //     id: current.id,
-  //     options: Object.keys(current.options),
-  //     title: current.title ?? current.id
-  //   };
-
-  //   return newValue;
-  // }
-
   function handleChange(e: any) {
     const selected = state.customPageComps.find((c: SFComponentOptions) => c.id == e.target.value);
     if (selected) {
-      const value = { id: selected.id, options: {} } as SFComponent;
+      const value = { id: selected.id, title: selected.title, options: {} } as SFComponent;
       dispatch({
         type: 'set_type_change',
         selectedId: e.target.value,
@@ -136,20 +131,19 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
         </Select>
       </FormControl>
 
-      {state.selectedComponent &&
-        state.selectedComponent.options.map((option: string) => (
-          <FormControl fullWidth>
-            <TextField
-              fullWidth
-              css={{ marginTop: 30 }}
-              label={option}
-              defaultValue=""
-              id={option}
-              onChange={(e) => handleOptionChange(e.target.value, option)}
-              value={state.currentValue?.options[option]}
-            ></TextField>
-          </FormControl>
-        ))}
+      <Column css={{ gap: '30px', marginTop: '20px' }}>
+        {state.selectedComponent &&
+          state.selectedComponent.options.map((option: CustomMapOptions) => (
+            <FromType
+              css={{ marginTop: '30px' }}
+              name={option.key}
+              type={option.type}
+              values={option.values}
+              onChange={(val) => handleOptionChange(val, option.key)}
+              currentValue={state.currentValue}
+            ></FromType>
+          ))}
+      </Column>
     </CenterRow>
   ));
 };

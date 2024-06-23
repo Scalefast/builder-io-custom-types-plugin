@@ -22,11 +22,3 @@ export const Column = styled.div({
   width: '100%',
   gap: 10
 });
-
-export const Tag = styled.span({
-  display: 'inline-block',
-  padding: '5px',
-  marginRight: 5,
-  borderRadius: '50%',
-  backgroundColor: '#525252',
-})
