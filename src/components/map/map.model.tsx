@@ -1,12 +1,11 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import { useObserver } from 'mobx-react';
-import { CustomEditorProps } from '../interfaces/custom-editor';
 import { useEffect, useState } from 'react';
-import { Row } from './utils';
 import { Button } from '@material-ui/core';
-import { CustomMapOptions } from '../interfaces/custom-map';
-import { CustomMapForm } from './map-form.model';
+import { CustomEditorProps, CustomMapOptions } from '../../models';
+import { Row } from '../../utils';
+import { CustomMapForm } from './map-form';
 
 /*
 * TODO

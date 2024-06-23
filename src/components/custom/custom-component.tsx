@@ -1,15 +1,14 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import { CustomEditorProps } from '../interfaces/custom-editor';
 import { useObserver } from 'mobx-react';
-import { CenterRow, Column } from './utils';
 import { BuilderContent } from '@builder.io/sdk';
 import { useEffect, useReducer } from 'react';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
-import { SFComponent, SFComponentOptions, SFComponentState } from '../interfaces/page-components';
-import ApiService from '../services/api.service';
-import { CustomMapOptions } from '../interfaces/custom-map';
-import { FromType } from './form-comps.model';
+import { CustomEditorProps, CustomMapOptions, SFComponent, SFComponentOptions, SFComponentState, defaultComponents } from '../../models'
+import { CenterRow, Column } from '../../utils';
+import { FromType } from './form-comps';
+import ApiService from '../../services/api.service';
+import { ListType } from './list-type';
 
 const actionMap: any = {
   'set_selected_component': (state: SFComponentState, action: any) => ({
@@ -38,7 +37,7 @@ const reducer = (state: SFComponentState, action: any) => {
   return handler ? handler(state, action) : state;
 }
 
-export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
+export const CustomComponent = (props: CustomEditorProps<any | undefined>) => {
   const { user } = props.context;
   const apiService = new ApiService();
   const value = props.value ? props.value.toJSON() : undefined;
@@ -56,7 +55,8 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
     const url = `page-components?apiKey=${user.apiKey}&query.published.$ne=archived&limit=50&cachebust=true`;
     const fetchedComps = await apiService.getModels(url, user.authHeaders);
 
-    const result = Array.isArray(fetchedComps.results) ? transformComponents(fetchedComps.results) : [];
+    let result = Array.isArray(fetchedComps.results) ? transformComponents(fetchedComps.results) : [];
+    result = result.concat(defaultComponents);
     dispatch({
       type: 'set_list_components',
       customPageComps: result,
@@ -133,16 +133,22 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
 
       <Column css={{ gap: '30px', marginTop: '20px' }}>
         {state.selectedComponent &&
-          state.selectedComponent.options.map((option: CustomMapOptions) => (
-            <FromType
-              css={{ marginTop: '30px' }}
-              name={option.key}
-              type={option.type}
-              values={option.values}
-              onChange={(val) => handleOptionChange(val, option.key)}
-              currentValue={state.currentValue}
-            ></FromType>
-          ))}
+          state.selectedComponent.options.map((option: CustomMapOptions) => {
+            if (option.type == 'list') {
+              return <ListType
+                value={option}
+                onChange={(val) => handleOptionChange(val, option.key)}
+                currentValue={state.currentValue}
+              ></ListType>
+            } else {
+              return <FromType
+                css={{ marginTop: '30px' }}
+                value={option}
+                onChange={(val) => handleOptionChange(val, option.key)}
+                currentValue={state.currentValue}
+              ></FromType>
+            }
+        })}
       </Column>
     </CenterRow>
   ));

@@ -1,11 +1,11 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import { useObserver } from 'mobx-react';
-import { Column, Row } from './utils';
 import { Chip, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
-import { CustomMapOptions, CustomTypes } from '../interfaces/custom-map';
 import { useEffect, useState } from 'react';
-import ClearIcon from '@material-ui/icons/Clear';
+import { Clear as ClearIcon } from '@material-ui/icons';
+import { CustomMapOptions, CustomTypes } from '../../models';
+import { Column, Row } from '../../utils';
 
 interface CustomMapFormProps {
   opt: CustomMapOptions
@@ -111,16 +111,16 @@ export const CustomMapForm = (props: CustomMapFormProps) => {
             </div>
           )
         }
-        { values && (
+        {values && (
           <div>
-          { values.map((t, index) => (
-            <Chip
-              css={{ marginRight: '5px'}}
-              label={t}
-              onDelete={() => handleDeleteTag(index)}
-              deleteIcon={<ClearIcon />}
-            />
-          ))}
+            {values.map((t, index) => (
+              <Chip
+                css={{ marginRight: '5px' }}
+                label={t}
+                onDelete={() => handleDeleteTag(index)}
+                deleteIcon={<ClearIcon />}
+              />
+            ))}
           </div>
         )}
       </Column>
