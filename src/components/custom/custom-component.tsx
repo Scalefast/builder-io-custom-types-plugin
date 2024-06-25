@@ -145,7 +145,7 @@ export const CustomComponent = (props: CustomEditorProps<any | undefined>) => {
                 css={{ marginTop: '30px' }}
                 value={option}
                 onChange={(val) => handleOptionChange(val, option.key)}
-                currentValue={state.currentValue}
+                currentValue={state.currentValue?.options[option.key]}
               ></FromType>
             }
         })}

@@ -1,10 +1,11 @@
-import { ApplicationContext } from './application-context';
+import { ApplicationContext } from '@builder.io/app-context';
 
 export interface CustomEditorProps<ValueType> {
-  value: ValueType | undefined;
-  onChange(newValue: ValueType): void;
-  field: any;
-  path: string | undefined;
   context: ApplicationContext;
+  customEditor: any;
+  field: any;
   object: any;
+  onChange(newValue: ValueType): void;
+  path: string | undefined;
+  value: ValueType | undefined;
 }

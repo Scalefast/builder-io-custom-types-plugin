@@ -1,5 +1,7 @@
 import { CustomMapOptions } from './custom-map';
 
+export type CustomValue = string | boolean | number | { [key: string]: CustomValue };
+
 export interface SFComponentOptions {
   id: string;
   title: string;
@@ -9,7 +11,7 @@ export interface SFComponentOptions {
 export interface SFComponent {
   id: string;
   title: string;
-  options: { [key: string]: string | boolean | number };
+  options: { [key: string]: CustomValue };
 }
 
 export interface SFComponentState {
