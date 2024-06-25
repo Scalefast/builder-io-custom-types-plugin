@@ -1,19 +1,19 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import { CustomEditorProps } from '../interfaces/custom-editor';
 import { useObserver } from 'mobx-react';
-import { Row } from './row';
 import { BuilderContent } from '@builder.io/sdk';
 import { useEffect, useReducer } from 'react';
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
-import { SFComponent, SFComponentOptions, SFComponentState } from '../interfaces/page-components';
-import ApiService from '../services/api.service';
+import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { CustomEditorProps, CustomMapOptions, SFComponent, SFComponentOptions, SFComponentState, defaultComponents } from '../../models'
+import { CenterRow, Column } from '../../utils';
+import { FromType } from './form-comps';
+import ApiService from '../../services/api.service';
+import { ListType } from './list-type';
 
 const actionMap: any = {
   'set_selected_component': (state: SFComponentState, action: any) => ({
     ...state,
     selectedComponent: action.selectedComponent,
-    selectedId: action.selectedId,
   }),
   'set_list_components': (state: SFComponentState, action: any) => ({
     ...state,
@@ -37,16 +37,15 @@ const reducer = (state: SFComponentState, action: any) => {
   return handler ? handler(state, action) : state;
 }
 
-export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
+export const CustomComponent = (props: CustomEditorProps<any | undefined>) => {
   const { user } = props.context;
   const apiService = new ApiService();
   const value = props.value ? props.value.toJSON() : undefined;
   const initialSelectedId = value ? value.id : '';
-  const initialSelectedComponent = value ? transformCurrent(value) : undefined;
   const initialState = {
     currentValue: value,
     customPageComps: [],
-    selectedComponent: initialSelectedComponent,
+    selectedComponent: undefined,
     selectedId: initialSelectedId,
   } as SFComponentState;
 
@@ -56,39 +55,37 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
     const url = `page-components?apiKey=${user.apiKey}&query.published.$ne=archived&limit=50&cachebust=true`;
     const fetchedComps = await apiService.getModels(url, user.authHeaders);
 
-    const result = Array.isArray(fetchedComps.results) ? transformComponents(fetchedComps.results) : [];
-    console.log(result);
+    let result = Array.isArray(fetchedComps.results) ? transformComponents(fetchedComps.results) : [];
+    result = result.concat(defaultComponents);
     dispatch({
       type: 'set_list_components',
       customPageComps: result,
     });
+
+    if (state.selectedId) {
+      const selectedComponent = result.find((c) => c.id == state.selectedId);
+      dispatch({
+        type: 'set_selected_component',
+        selectedComponent: selectedComponent,
+      });
+    }
   }
 
   function transformComponents(fetchedComps: BuilderContent[]): SFComponentOptions[] {
     let listOfComponents: SFComponentOptions[] = [];
     listOfComponents = fetchedComps.map((comp) => {
       const id = comp.data?.name ?? '';
-      const options = Object.keys(comp.data?.options ?? {});
+      const options: CustomMapOptions[] = comp.data?.options ?? [];
       const title = comp.name ?? id;
       return { id, options, title } as SFComponentOptions;
     });
     return listOfComponents;
   }
 
-  function transformCurrent(current: SFComponent): SFComponentOptions {
-    const newValue = {
-      id: current.id,
-      options: Object.keys(current.options),
-      title: current.title ?? current.id
-    };
-
-    return newValue;
-  }
-
   function handleChange(e: any) {
     const selected = state.customPageComps.find((c: SFComponentOptions) => c.id == e.target.value);
     if (selected) {
-      const value = { id: selected.id, options: {} } as SFComponent;
+      const value = { id: selected.id, title: selected.title, options: {} } as SFComponent;
       dispatch({
         type: 'set_type_change',
         selectedId: e.target.value,
@@ -118,7 +115,7 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
   }, []);
 
   return useObserver(() => (
-    <Row css={{ marginTop: 5, marginBottom: 10 }}>
+    <CenterRow css={{ marginTop: 5, marginBottom: 10 }}>
       <FormControl fullWidth>
         <InputLabel id="input-component-template-label">Select custom component template</InputLabel>
         <Select
@@ -134,20 +131,25 @@ export const PageComponent = (props: CustomEditorProps<any | undefined>) => {
         </Select>
       </FormControl>
 
-      {state.selectedComponent &&
-        state.selectedComponent.options.map((option: string) => (
-          <FormControl fullWidth>
-            <TextField
-              fullWidth
-              css={{ marginTop: 30 }}
-              label={option}
-              defaultValue=""
-              id={option}
-              onChange={(e) => handleOptionChange(e.target.value, option)}
-              value={state.currentValue?.options[option]}
-            ></TextField>
-          </FormControl>
-        ))}
-    </Row>
+      <Column css={{ gap: '30px', marginTop: '20px' }}>
+        {state.selectedComponent &&
+          state.selectedComponent.options.map((option: CustomMapOptions) => {
+            if (option.type == 'list') {
+              return <ListType
+                value={option}
+                onChange={(val) => handleOptionChange(val, option.key)}
+                currentValue={state.currentValue}
+              ></ListType>
+            } else {
+              return <FromType
+                css={{ marginTop: '30px' }}
+                value={option}
+                onChange={(val) => handleOptionChange(val, option.key)}
+                currentValue={state.currentValue?.options[option.key]}
+              ></FromType>
+            }
+        })}
+      </Column>
+    </CenterRow>
   ));
 };
