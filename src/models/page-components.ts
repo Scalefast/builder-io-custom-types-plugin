@@ -12,6 +12,8 @@ export interface SFComponent {
   id: string;
   title: string;
   options: { [key: string]: CustomValue };
+  updated: number;
+  toJSON(): any;
 }
 
 export interface SFComponentState {

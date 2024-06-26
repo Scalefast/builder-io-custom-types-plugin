@@ -19,6 +19,11 @@ const actionMap: any = {
     ...state,
     customPageComps: action.customPageComps,
   }),
+  'set_list_components_and_selected': (state: SFComponentState, action: any) => ({
+    ...state,
+    customPageComps: action.customPageComps,
+    selectedComponent: action.selectedComponent,
+  }),
   'set_type_change': (state: SFComponentState, action: any) => ({
     ...state,
     selectedId: action.selectedId,
@@ -37,7 +42,7 @@ const reducer = (state: SFComponentState, action: any) => {
   return handler ? handler(state, action) : state;
 }
 
-export const CustomComponent = (props: CustomEditorProps<any | undefined>) => {
+export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined>) => {
   const { user } = props.context;
   const apiService = new ApiService();
   const value = props.value ? props.value.toJSON() : undefined;
@@ -57,16 +62,18 @@ export const CustomComponent = (props: CustomEditorProps<any | undefined>) => {
 
     let result = Array.isArray(fetchedComps.results) ? transformComponents(fetchedComps.results) : [];
     result = result.concat(defaultComponents);
-    dispatch({
-      type: 'set_list_components',
-      customPageComps: result,
-    });
+    const selectedComponent = state.selectedId ? result.find((c) => c.id == state.selectedId): undefined;
 
-    if (state.selectedId) {
-      const selectedComponent = result.find((c) => c.id == state.selectedId);
+    if (result && selectedComponent) {
       dispatch({
-        type: 'set_selected_component',
+        type: 'set_list_components_and_selected',
         selectedComponent: selectedComponent,
+        customPageComps: result,
+      });
+    } else {
+      dispatch({
+        type: 'set_list_components',
+        customPageComps: result,
       });
     }
   }
@@ -99,13 +106,13 @@ export const CustomComponent = (props: CustomEditorProps<any | undefined>) => {
 
   function handleOptionChange(value: any, key: string): void {
     if (state.currentValue) {
-      const newValue = state.currentValue;
+      const newValue = state.currentValue as SFComponent;
       newValue.options[key] = value;
+      newValue.updated = new Date().valueOf();
       dispatch({
         type: 'set_option_change',
         currentValue: newValue,
       });
-
       props.onChange(newValue);
     }
   }
