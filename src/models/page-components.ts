@@ -26,7 +26,7 @@ export interface SFComponentState {
 export const defaultComponents: SFComponentOptions[] = [
   {
     id: 'submenu',
-    title: 'Sub-menu Image List',
+    title: 'Subcategory Navigation',
     options: [
       {
         key: 'item', type: 'list', subOptions: [
