@@ -28,11 +28,11 @@ Go to builder -> Plugins -> Advanced configuration
 Add the following url:
 
 ```
-http://localhost:1268/plugin.system.js
+http://localhost:1268/plugin.system.js?pluginId=@scalefast/builder.io
 ```
 
 ## 4. Prod
 
 ```
-https://cdn.jsdelivr.net/gh/scalefast/builder-io-custom-types-plugin@v0.0.1/dist/plugin.system.js
+https://cdn.jsdelivr.net/gh/scalefast/builder-io-custom-types-plugin@v0.0.1/dist/plugin.system.js?pluginId=@scalefast/builder.io
 ```
