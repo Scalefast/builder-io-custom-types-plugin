@@ -43,7 +43,7 @@ const reducer = (state: SFComponentState, action: any) => {
 }
 
 export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined>) => {
-  const { user } = props.context;
+  const { context } = props;
   const apiService = new ApiService();
   const value = props.value ? props.value.toJSON() : undefined;
   const initialSelectedId = value ? value.id : '';
@@ -57,9 +57,8 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
   const [state, dispatch] = useReducer(reducer, initialState);
 
   async function getModels() {
-    const url = `page-components?apiKey=${user.apiKey}&query.published.$ne=archived&limit=50&cachebust=true`;
-    const fetchedComps = await apiService.getModels(url, user.authHeaders);
-
+    const params = `query.published.$eq=published&limit=50&cachebust=true&fields=data,id`;
+    const fetchedComps = await apiService.getModel('page-components', context, params);
     let result = Array.isArray(fetchedComps.results) ? transformComponents(fetchedComps.results) : [];
     result = result.concat(defaultComponents);
     const selectedComponent = state.selectedId ? result.find((c) => c.id == state.selectedId): undefined;
@@ -118,8 +117,13 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
   }
 
   useEffect(() => {
+    console.log(state);
     getModels();
   }, []);
+
+  useEffect(() => {
+    // console.log('actualizado el estado');
+  }, [state]);
 
   return useObserver(() => (
     <CenterRow css={{ marginTop: 5, marginBottom: 10 }}>

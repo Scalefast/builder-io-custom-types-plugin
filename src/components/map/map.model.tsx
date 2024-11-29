@@ -14,11 +14,12 @@ import { CustomMapForm } from './map-form';
 export const CustomMap = (props: CustomEditorProps<any | undefined>) => {
   const initialValue = props.value ? props.value.map((opt: any) => opt.toJSON()) : [];
   const [ options, setOptions ] = useState<CustomMapOptions[]>(initialValue);
+  const { context } = props;
 
   function addNewOption(): void {
     const newOptions = [
       ...options,
-      { key: '', type: '' }
+      { key: '', type: '', required: false, helperText: '' }
     ];
 
     setOptions(newOptions);
@@ -38,15 +39,11 @@ export const CustomMap = (props: CustomEditorProps<any | undefined>) => {
     props.onChange(currentOptions);
   }
 
-  useEffect(() => {
-
-  }, []);
-
   return useObserver(() => (
     <div>
       {options.map((option, index) => (
         <Row css={{ marginTop: 5, marginBottom: 10 }}>
-          <CustomMapForm opt={option} index={index} onChange={changeOption}></CustomMapForm>
+          <CustomMapForm opt={option} index={index} onChange={changeOption} context={context}></CustomMapForm>
         </Row>
       ))}
       <Row css={{ marginTop: 5, marginBottom: 10 }}>

@@ -1,7 +1,7 @@
-import { ApplicationContext } from '@builder.io/app-context';
+import { CustomApplicationContext } from './custom-application-context';
 
 export interface CustomEditorProps<ValueType> {
-  context: ApplicationContext;
+  context: CustomApplicationContext;
   customEditor: any;
   field: any;
   object: any;
