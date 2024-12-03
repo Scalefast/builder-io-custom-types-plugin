@@ -3,7 +3,7 @@ export interface CustomMapOptions {
   type: string,
   required?: boolean;
   helperText?: string;
-  extraOptions?: Record<string, any>[];
+  extraOptions?: Record<string, any>;
   values?: string[],
   subOptions?: CustomMapOptions[]
 }
@@ -14,5 +14,6 @@ export const CustomTypes: CustomMapOptions[] = [
   { key: 'number', type: 'Number', required: false, helperText: '' },
   { key: 'select', type: 'Select', required: false, helperText: '' },
   { key: 'reference', type: 'Reference', required: false, helperText: '' },
-  { key: 'data_source', type: 'Data Source', required: false, helperText: '' }
+  { key: 'data_source', type: 'Data Source', required: false, helperText: '' },
+  { key: 'assets_image', type: 'Assets Image', required: false, helperText: '' },
 ];

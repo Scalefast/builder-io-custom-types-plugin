@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import { CustomMapOptions, CustomValue, SFComponent } from '../../models';
+import { CustomApplicationContext, CustomMapOptions, CustomValue, SFComponent } from '../../models';
 import { Column, Row } from '../../utils';
 import { FromType } from './form-comps';
 import { Button } from '@material-ui/core';
@@ -11,6 +11,7 @@ type MenuTypeProps = {
   value: CustomMapOptions;
   onChange(e: any): void;
   currentValue: SFComponent | undefined;
+  context: CustomApplicationContext
 };
 
 export const ListType = (props: MenuTypeProps) => {
@@ -57,7 +58,7 @@ export const ListType = (props: MenuTypeProps) => {
   return (
     <Column id="column-item-list">
       {items.map((item, indexItem) => (
-        <Column id={'column-item-list' + indexItem} css={{ backgroundColor: '#1e1e1e', borderRadius: '4px', padding: '12px' }}>
+        <Column id={'column-item-list' + indexItem} css={{ backgroundColor: 'var(--off-background-4)', borderRadius: '4px', padding: '12px' }}>
           {props.value.subOptions &&
             props.value.subOptions.map((o: CustomMapOptions) => (
               <FromType
@@ -65,6 +66,7 @@ export const ListType = (props: MenuTypeProps) => {
                 value={o}
                 onChange={(val) => handleInput(val, indexItem, o.key)}
                 currentValue={item[o.key]}
+                context={props.context}
               ></FromType>
           ))}
 

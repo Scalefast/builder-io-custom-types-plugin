@@ -1,13 +1,10 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import { FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField } from '@material-ui/core';
-import { CustomMapOptions, CustomValue } from '../../models';
-
-type FormTypeProps = {
-  value: CustomMapOptions;
-  onChange(e: any): void;
-  currentValue: CustomValue | undefined;
-};
+import { FormTypeProps } from '../../models';
+import { ReferenceType } from './reference-type';
+import { camelCaseToHuman } from '../../utils';
+import { ImageType } from './image-type';
 
 export const FromType = (props: FormTypeProps) => {
   if (props.value.type == 'number') {
@@ -16,7 +13,7 @@ export const FromType = (props: FormTypeProps) => {
         <TextField
           fullWidth
           css={{ marginTop: 30 }}
-          label={props.value.key}
+          label={camelCaseToHuman(props.value.key)}
           onChange={(e) => props.onChange(e.target.value)}
           value={props.currentValue}
           type="number"
@@ -37,7 +34,7 @@ export const FromType = (props: FormTypeProps) => {
               inputProps={{ 'aria-label': 'controlled' }}
             />
           }
-          label={props.value.key}
+          label={camelCaseToHuman(props.value.key)}
         ></FormControlLabel>
       </FormControl>
     );
@@ -46,10 +43,36 @@ export const FromType = (props: FormTypeProps) => {
   if (props.value.type == 'select') {
     return (
       <FormControl fullWidth>
-        <InputLabel>{props.value.key}</InputLabel>
+        <InputLabel>{camelCaseToHuman(props.value.key)}</InputLabel>
         <Select value={props.currentValue} onChange={(e) => props.onChange(e.target.value)}>
           {props.value.values && props.value.values.map((comp: string) => <MenuItem value={comp}>{comp}</MenuItem>)}
         </Select>
+      </FormControl>
+    );
+  }
+
+  if (props.value.type == 'reference') {
+    return (
+      <FormControl fullWidth>
+        <ReferenceType
+          value={props.value}
+          onChange={(value) => props.onChange(value)}
+          currentValue={props.currentValue}
+          context={props.context}
+        ></ReferenceType>
+      </FormControl>
+    );
+  }
+
+  if (props.value.type == 'assets_image') {
+    return (
+      <FormControl fullWidth>
+        <ImageType
+          value={props.value}
+          onChange={(value) => props.onChange(value)}
+          currentValue={props.currentValue}
+          context={props.context}
+        ></ImageType>
       </FormControl>
     );
   }
@@ -58,7 +81,7 @@ export const FromType = (props: FormTypeProps) => {
     <FormControl fullWidth>
       <TextField
         fullWidth
-        label={props.value.key}
+        label={camelCaseToHuman(props.value.key)}
         onChange={(e) => props.onChange(e.target.value)}
         value={props.currentValue}
       ></TextField>

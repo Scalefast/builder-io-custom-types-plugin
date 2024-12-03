@@ -1,6 +1,6 @@
 import { CustomMapOptions } from './custom-map';
 
-export type CustomValue = string | boolean | number | { [key: string]: CustomValue };
+export type CustomValue = string | boolean | number | { [key: string]: CustomValue } | Record<string, any>;
 
 export interface SFComponentOptions {
   id: string;
@@ -17,7 +17,6 @@ export interface SFComponent {
 }
 
 export interface SFComponentState {
-  currentValue: SFComponent | undefined;
   customPageComps: SFComponentOptions[];
   selectedComponent: SFComponentOptions | undefined;
   selectedId: string;

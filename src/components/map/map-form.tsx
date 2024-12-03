@@ -14,9 +14,8 @@ import {
 } from '@material-ui/core';
 import { useEffect, useReducer, useState } from 'react';
 import { Clear as ClearIcon } from '@material-ui/icons';
-import { CustomMapOptions, CustomTypes } from '../../models';
+import { CustomApplicationContext, CustomMapOptions, CustomTypes, Model } from '../../models';
 import { Column, Row } from '../../utils';
-import { CustomApplicationContext, Model } from '../../models/custom-application-context';
 
 interface CustomMapFormProps {
   opt: CustomMapOptions;
@@ -135,12 +134,16 @@ export const CustomMapForm = (props: CustomMapFormProps) => {
   }
 
   function handleReferenceModel(value: string): void {
-    dispatch({
-      type: 'set_extra_options',
-      extraOptions: {
-        'modelId': value
-      },
-    });
+    const model = models.find((m) => m.id == value);
+    if (model) {
+      dispatch({
+        type: 'set_extra_options',
+        extraOptions: {
+          'modelId': model.id,
+          'modelName': model.name
+        },
+      });
+    }
   }
 
   function handleChangeValues(pressedKey: string): void {
