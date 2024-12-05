@@ -28,30 +28,4 @@ export default class ApiService {
 
     return result.value;
   }
-
-  async queryContent(contentId: string, context: CustomApplicationContext, params?: string) {
-    let url = `${this.baseUrl}v1/query-data/?apiKey=${context.user.apiKey}&collection=content&query.modelId=${contentId}`;
-    if (params) {
-      url += `&${params}`;
-    }
-
-    const result = await context.httpCache.getAsync(url, {
-      headers: context.user.authHeaders,
-    });
-
-    return result.value;
-  }
-
-  async queryAssets(context: CustomApplicationContext, params?: string) {
-    let url = `${this.baseUrl}v1/query-assets/?apiKey=${context.user.apiKey}&collection=assets`;
-    if (params) {
-      url += `&${params}`;
-    }
-
-    const result = await context.httpCache.getAsync(url, {
-      headers: context.user.authHeaders,
-    });
-
-    return result.value;
-  }
 }

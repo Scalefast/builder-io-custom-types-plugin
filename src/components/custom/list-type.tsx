@@ -11,7 +11,8 @@ type MenuTypeProps = {
   value: CustomMapOptions;
   onChange(e: any): void;
   currentValue: SFComponent | undefined;
-  context: CustomApplicationContext
+  context: CustomApplicationContext,
+  renderEditor: any,
 };
 
 export const ListType = (props: MenuTypeProps) => {
@@ -67,6 +68,7 @@ export const ListType = (props: MenuTypeProps) => {
                 onChange={(val) => handleInput(val, indexItem, o.key)}
                 currentValue={item[o.key]}
                 context={props.context}
+                renderEditor={props.renderEditor}
               ></FromType>
           ))}
 

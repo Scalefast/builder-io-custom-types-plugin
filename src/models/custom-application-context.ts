@@ -168,3 +168,11 @@ export interface CustomApplicationContext {
     pathname: string;
   };
 }
+
+export interface OnSaveActions {
+  updateSettings(partal: Record<string, any>): Promise<void>;
+}
+
+export interface AppActions {
+  triggerSettingsDialog(pluginId: string): Promise<void>;
+}

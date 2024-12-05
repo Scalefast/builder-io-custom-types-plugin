@@ -31,7 +31,7 @@ export const defaultComponents: SFComponentOptions[] = [
         key: 'item', type: 'list', subOptions: [
           { key: 'name', type: 'text' },
           { key: 'url', type: 'text' },
-          { key: 'image', type: 'image' },
+          { key: 'image', type: 'text' },
         ]
       }
     ]

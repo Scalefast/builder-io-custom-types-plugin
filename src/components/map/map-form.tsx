@@ -15,7 +15,7 @@ import {
 import { useEffect, useReducer, useState } from 'react';
 import { Clear as ClearIcon } from '@material-ui/icons';
 import { CustomApplicationContext, CustomMapOptions, CustomTypes, Model } from '../../models';
-import { Column, Row } from '../../utils';
+import { Column, getModels, Row } from '../../utils';
 
 interface CustomMapFormProps {
   opt: CustomMapOptions;
@@ -77,17 +77,8 @@ export const CustomMapForm = (props: CustomMapFormProps) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [tag, setTag] = useState<string>('');
   const [id] = useState<string>(`ìnput-component-prop-${props.index}`);
-  const models: Model[] = [];
-  for (const m of props.context.models.result) {
-    if (m.archived == false && m.kind == 'data' && m.name != 'page-components') {
-      models.push({
-        id: m.id,
-        name: m.name,
-        kind: m.kind,
-        displayName: m.displayName
-      });
-    }
-  }
+  const models: Model[] = getModels();
+
 
   function handleChangeKey(v: string): void {
     dispatch({
@@ -229,9 +220,9 @@ export const CustomMapForm = (props: CustomMapFormProps) => {
               <InputLabel css={{ display: 'block', paddingBottom: 10, fontSize: 14, fontWeight: 500 }} id={id + '-reference'}>
                 Data Model
               </InputLabel>
-              <Select label="Data model" id={id} onChange={(e) => handleReferenceModel(e.target.value as string)} value={state.extraOptions.modelId}>
+              <Select label="Data model" id={id} onChange={(e) => handleReferenceModel(e.target.value as string)} value={state.extraOptions.modelName}>
                 {models.map((d) => (
-                  <MenuItem value={d.id}>{d.displayName.length > 0 ? d.displayName : d.name}</MenuItem>
+                  <MenuItem value={d.name}>{d.displayName.length > 0 ? d.displayName : d.name}</MenuItem>
                 ))}
               </Select>
             </div>

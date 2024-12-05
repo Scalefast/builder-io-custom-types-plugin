@@ -8,4 +8,9 @@ export interface CustomEditorProps<ValueType> {
   onChange(newValue: ValueType): void;
   path: string | undefined;
   value: ValueType | undefined;
+  renderEditor(options: {
+    fields: any[];
+    object: any;
+    onChange?: (options: any) => any;
+  }): React.ReactElement;
 }

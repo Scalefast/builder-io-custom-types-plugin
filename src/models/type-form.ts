@@ -6,5 +6,6 @@ export type FormTypeProps = {
   value: CustomMapOptions;
   onChange(e: any): void;
   currentValue: CustomValue | undefined;
-  context: CustomApplicationContext
+  context: CustomApplicationContext,
+  renderEditor: any
 };

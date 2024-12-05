@@ -3,3 +3,5 @@ export const camelCaseToHuman = (text: String) => {
 
   return result.charAt(0).toUpperCase() + result.slice(1);
 }
+
+export const fastClone = (obj: any) => JSON.parse(JSON.stringify(obj));

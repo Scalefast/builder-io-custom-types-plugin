@@ -2,7 +2,7 @@
 import { jsx } from '@emotion/core';
 import { useObserver } from 'mobx-react';
 import { BuilderContent } from '@builder.io/sdk';
-import { useEffect, useReducer, useRef, useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import {
   CustomEditorProps,
@@ -10,12 +10,18 @@ import {
   SFComponent,
   SFComponentOptions,
   SFComponentState,
+  booleanType,
   defaultComponents,
+  fileType,
+  numberType,
+  selectType,
+  textType,
 } from '../../models';
-import { CenterRow, Column } from '../../utils';
+import { CenterRow, Column, fastClone } from '../../utils';
 import { FromType } from './form-comps';
 import ApiService from '../../services/api.service';
 import { ListType } from './list-type';
+import { observable, ObservableMap } from 'mobx';
 
 const actionMap: any = {
   set_selected_component: (state: SFComponentState, action: any) => ({
@@ -57,6 +63,7 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
   const isInitialRender = useRef(true);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [currentValue, setCurrentValue] = useState<SFComponent | undefined>(value);
+  const optionsObject = currentData();
 
   async function getModels() {
     const params = `query.published.$eq=published&limit=50&cachebust=true&fields=data,id`;
@@ -77,6 +84,10 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
         customPageComps: result,
       });
     }
+  }
+
+  function currentData(): ObservableMap<any> {
+    return observable.map(currentValue ? currentValue.options : {});
   }
 
   function transformComponents(fetchedComps: BuilderContent[]): SFComponentOptions[] {
@@ -131,6 +142,46 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
     });
   }
 
+  function handleOptionUpdate(opts: any): void {
+    setCurrentValue((prevValue) => {
+      if (!prevValue) {
+        return prevValue;
+      }
+
+      return {
+        ...prevValue,
+        options: opts,
+        updated: Date.now(),
+      };
+    });
+  }
+
+  function getFields(comp: SFComponentOptions): any[] {
+    const fields: any[] = [];
+    comp.options.map((option) => {
+      if (option.type == 'text') {
+        fields.push(textType(option));
+      }
+
+      if (option.type == 'number') {
+        fields.push(numberType(option));
+      }
+
+      if (option.type == 'assets_image') {
+        fields.push(fileType(option));
+      }
+
+      if (option.type == 'boolean') {
+        fields.push(booleanType(option));
+      }
+
+      if (option.type == 'select' && option.values !== undefined && option.values.length > 0) {
+        fields.push(selectType(option));
+      }
+    });
+    return fields;
+  }
+
   useEffect(() => {
     getModels();
   }, []);
@@ -145,47 +196,64 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
   }, [currentValue]);
 
   return useObserver(() => (
-    <CenterRow css={{ marginTop: 5, marginBottom: 10 }}>
-      <FormControl fullWidth>
-        <InputLabel id="input-component-template-label">Select custom component</InputLabel>
-        <Select
-          labelId="input-component-template-label"
-          id="input-component-template"
-          css={{ marginTop: 30 }}
-          value={state.selectedId}
-          onChange={handleChange}
-        >
-          {state.customPageComps.map((comp: SFComponentOptions) => (
-            <MenuItem value={comp.id}>{comp.title}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+    <React.Fragment>
+      <CenterRow css={{ marginTop: 5, marginBottom: 10, width: '100%' }}>
+        <FormControl fullWidth>
+          <InputLabel id="input-component-template-label">Select custom component</InputLabel>
+          <Select
+            labelId="input-component-template-label"
+            id="input-component-template"
+            css={{ marginTop: 30 }}
+            value={state.selectedId}
+            onChange={handleChange}
+          >
+            {state.customPageComps.map((comp: SFComponentOptions) => (
+              <MenuItem value={comp.id}>{comp.title}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      <Column css={{ gap: '30px', marginTop: '20px' }}>
-        {state.selectedComponent &&
-          state.selectedComponent.options.map((option: CustomMapOptions) => {
-            if (option.type == 'list') {
-              return (
-                <ListType
-                  value={option}
-                  onChange={(val) => handleOptionChange(val, option.key)}
-                  currentValue={currentValue}
-                  context={props.context}
-                ></ListType>
-              );
-            } else {
-              return (
-                <FromType
-                  css={{ marginTop: '30px' }}
-                  value={option}
-                  onChange={(val) => handleOptionChange(val, option.key)}
-                  currentValue={currentValue?.options[option.key]}
-                  context={props.context}
-                ></FromType>
-              );
-            }
-          })}
-      </Column>
-    </CenterRow>
+        {state.selectedComponent && (
+          <div css={{ width: '100%', marginTop: 15 }}>
+            {props.renderEditor({
+              object: optionsObject,
+              fields: getFields(state.selectedComponent),
+              onChange: (map: any) => {
+                const options = fastClone(map);
+                handleOptionUpdate(options);
+              },
+            })}
+          </div>
+        )}
+
+        <Column>
+          {state.selectedComponent &&
+            state.selectedComponent.options.map((option: CustomMapOptions) => {
+              if (option.type == 'list') {
+                return (
+                  <ListType
+                    value={option}
+                    onChange={(val) => handleOptionChange(val, option.key)}
+                    currentValue={currentValue}
+                    context={props.context}
+                    renderEditor={props.renderEditor}
+                  ></ListType>
+                );
+              } else if (option.type == 'reference') {
+                return (
+                  <FromType
+                    css={{ marginTop: '30px' }}
+                    value={option}
+                    onChange={(val) => handleOptionChange(val, option.key)}
+                    currentValue={currentValue?.options[option.key]}
+                    context={props.context}
+                    renderEditor={props.renderEditor}
+                  ></FromType>
+                );
+              }
+            })}
+        </Column>
+      </CenterRow>
+    </React.Fragment>
   ));
 };
