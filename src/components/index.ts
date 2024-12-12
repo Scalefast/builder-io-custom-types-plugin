@@ -1,7 +1,6 @@
-export * from './custom/custom-component';
-export * from './custom/form-comps';
-export * from './custom/list-type';
-export * from './custom/reference-type';
+export * from './custom/custom.component';
+export * from './custom/custom-form.component';
+export * from './custom/custom-list-type.component';
 
-export * from './map/map-form';
-export * from './map/map.model';
+export * from './map/map-form.component';
+export * from './map/map.component';

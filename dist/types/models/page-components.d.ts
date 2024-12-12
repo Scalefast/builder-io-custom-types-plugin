@@ -13,7 +13,6 @@ export interface SFComponent {
     options: {
       [key: string]: CustomValue;
     };
-    updated: number;
     toJSON(): any;
 }
 export interface SFComponentState {

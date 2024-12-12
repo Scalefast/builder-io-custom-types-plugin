@@ -14,14 +14,14 @@ import {
   defaultComponents,
   fileType,
   numberType,
+  referenceType,
   selectType,
   textType,
 } from '../../models';
 import { CenterRow, Column, fastClone } from '../../utils';
-import { FromType } from './form-comps';
 import ApiService from '../../services/api.service';
-import { ListType } from './list-type';
-import { observable, ObservableMap } from 'mobx';
+import { ListType } from './custom-list-type.component';
+import { IObjectDidChange, observable, observe } from 'mobx';
 
 const actionMap: any = {
   set_selected_component: (state: SFComponentState, action: any) => ({
@@ -63,7 +63,7 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
   const isInitialRender = useRef(true);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [currentValue, setCurrentValue] = useState<SFComponent | undefined>(value);
-  const optionsObject = currentData();
+  const optionsObject = observable.map({}, { deep: false });
 
   async function getModels() {
     const params = `query.published.$eq=published&limit=50&cachebust=true&fields=data,id`;
@@ -86,8 +86,34 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
     }
   }
 
-  function currentData(): ObservableMap<any> {
-    return observable.map(currentValue ? currentValue.options : {});
+  function observeChanges(change: IObjectDidChange) {
+    if (change.type === 'update' || change.type === 'add') {
+      handleOptionChange(typeof change.newValue == 'object' ? change.newValue.toJSON(): change.newValue, change.name.toString());
+    }
+  }
+
+  async function loadContentInfo(referenceValue: any): Promise<any> {
+    const params = `query.published.$eq=published&limit=50&cachebust=true`;
+    return await apiService.getContent(referenceValue.model, referenceValue.id, props.context, params);
+  }
+
+  async function currentData(): Promise<void> {
+    const copyCurrentValue = currentValue;
+    if (copyCurrentValue) {
+      for (const value of Object.keys(copyCurrentValue.options)) {
+        let keyValue = copyCurrentValue.options[value];
+        if (typeof keyValue === 'object' && '@type' in keyValue && keyValue['@type'] === '@builder.io/core:Reference') {
+          const apiValue = await loadContentInfo(keyValue);
+          if (apiValue) {
+            keyValue.value = apiValue;
+            copyCurrentValue.options[value] = keyValue;
+          }
+        }
+      }
+    }
+
+    optionsObject.replace(copyCurrentValue ? copyCurrentValue.options : {});
+    observe(optionsObject, observeChanges);
   }
 
   function transformComponents(fetchedComps: BuilderContent[]): SFComponentOptions[] {
@@ -126,8 +152,7 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
         delete options[key];
         return {
           ...prevValue,
-          options: options,
-          updated: Date.now(),
+          options: options
         };
       }
 
@@ -136,8 +161,7 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
         options: {
           ...prevValue.options,
           [key]: value,
-        },
-        updated: Date.now(),
+        }
       };
     });
   }
@@ -150,8 +174,7 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
 
       return {
         ...prevValue,
-        options: opts,
-        updated: Date.now(),
+        options: opts
       };
     });
   }
@@ -159,6 +182,10 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
   function getFields(comp: SFComponentOptions): any[] {
     const fields: any[] = [];
     comp.options.map((option) => {
+      if (option.type == 'reference') {
+        fields.push(referenceType(option));
+      }
+
       if (option.type == 'text') {
         fields.push(textType(option));
       }
@@ -181,6 +208,10 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
     });
     return fields;
   }
+
+  useEffect(() => {
+    currentData();
+  });
 
   useEffect(() => {
     getModels();
@@ -213,14 +244,15 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
           </Select>
         </FormControl>
 
-        {state.selectedComponent && (
+        {(state.selectedComponent && optionsObject) && (
           <div css={{ width: '100%', marginTop: 15 }}>
             {props.renderEditor({
               object: optionsObject,
               fields: getFields(state.selectedComponent),
               onChange: (map: any) => {
+                debugger;
                 const options = fastClone(map);
-                handleOptionUpdate(options);
+                console.log(options);
               },
             })}
           </div>
@@ -229,7 +261,7 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
         <Column>
           {state.selectedComponent &&
             state.selectedComponent.options.map((option: CustomMapOptions) => {
-              if (option.type == 'list') {
+              if (option.type == 'custom_list') {
                 return (
                   <ListType
                     value={option}
@@ -238,17 +270,6 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
                     context={props.context}
                     renderEditor={props.renderEditor}
                   ></ListType>
-                );
-              } else if (option.type == 'reference') {
-                return (
-                  <FromType
-                    css={{ marginTop: '30px' }}
-                    value={option}
-                    onChange={(val) => handleOptionChange(val, option.key)}
-                    currentValue={currentValue?.options[option.key]}
-                    context={props.context}
-                    renderEditor={props.renderEditor}
-                  ></FromType>
                 );
               }
             })}

@@ -2,6 +2,7 @@
 import { jsx } from '@emotion/core';
 import { useObserver } from 'mobx-react';
 import {
+  Button,
   Checkbox,
   Chip,
   FormControl,
@@ -14,6 +15,7 @@ import {
 } from '@material-ui/core';
 import { useEffect, useReducer, useState } from 'react';
 import { Clear as ClearIcon } from '@material-ui/icons';
+import { Add as AddIcon } from '@material-ui/icons';
 import { CustomApplicationContext, CustomMapOptions, CustomTypes, Model } from '../../models';
 import { Column, getModels, Row } from '../../utils';
 
@@ -161,7 +163,7 @@ export const CustomMapForm = (props: CustomMapFormProps) => {
   }, [state]);
 
   return useObserver(() => (
-    <Row css={{ marginTop: 5, marginBottom: 10 }}>
+    <Row css={{ marginTop: 5, marginBottom: 10, background: 'var(--off-background-2)', padding: '10px 20px', borderRadius: 10 }}>
       <Column>
         <Row>
           <div>
@@ -186,7 +188,7 @@ export const CustomMapForm = (props: CustomMapFormProps) => {
           </div>
 
           {state.type == 'select' && (
-          <Column>
+            <Column>
               <div>
                 <FormControl>
                   <TextField
@@ -199,41 +201,42 @@ export const CustomMapForm = (props: CustomMapFormProps) => {
                   ></TextField>
                 </FormControl>
               </div>
-            {state.type == 'select' && state.values && (
-              <div>
-                {state.values.map((t: any, index: number) => (
-                  <Chip
-                  css={{ marginRight: '5px', marginBottom: '5px' }}
-                  label={t}
-                  onDelete={() => handleDeleteTag(index)}
-                  deleteIcon={<ClearIcon />}
-                  />
-                ))}
-              </div>
-            )}
-          </Column>
+              {state.type == 'select' && state.values && (
+                <div>
+                  {state.values.map((t: any, index: number) => (
+                    <Chip
+                      css={{ marginRight: '5px', marginBottom: '5px' }}
+                      label={t}
+                      onDelete={() => handleDeleteTag(index)}
+                      deleteIcon={<ClearIcon />}
+                    />
+                  ))}
+                </div>
+              )}
+            </Column>
           )}
 
           {state.type == 'reference' && (
-          <Column>
-            <div>
-              <InputLabel css={{ display: 'block', paddingBottom: 10, fontSize: 14, fontWeight: 500 }} id={id + '-reference'}>
-                Data Model
-              </InputLabel>
-              <Select label="Data model" id={id} onChange={(e) => handleReferenceModel(e.target.value as string)} value={state.extraOptions.modelName}>
-                {models.map((d) => (
-                  <MenuItem value={d.name}>{d.displayName.length > 0 ? d.displayName : d.name}</MenuItem>
-                ))}
-              </Select>
-            </div>
-          </Column>
+            <Column>
+              <div>
+                <InputLabel css={{ display: 'block', paddingBottom: 10, fontSize: 14, fontWeight: 500 }} id={id + '-reference'}>
+                  Data Model
+                </InputLabel>
+                <Select label="Data model" id={id} onChange={(e) => handleReferenceModel(e.target.value as string)} value={state.extraOptions.modelName}>
+                  {models.map((d) => (
+                    <MenuItem value={d.name}>{d.displayName.length > 0 ? d.displayName : d.name}</MenuItem>
+                  ))}
+                </Select>
+              </div>
+            </Column>
           )}
         </Row>
-        <Row>
+
+        <Row css={{ marginTop: 10 }}>
           <Column>
             <FormControl css={{ width: '100%', flexShrink: 0, flexGrow: 1 }}>
               <TextField
-                label="Helper text (max 200 caractéres)"
+                label="Helper text (max 200 characters)"
                 value={state.helperText}
                 inputProps={{ maxLength: 200 }}
                 onChange={(e) => handleChangeHelperText(e.target.value)}

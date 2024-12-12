@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
 import { CustomEditorProps, CustomMapOptions } from '../../models';
 import { Row } from '../../utils';
-import { CustomMapForm } from './map-form';
+import { CustomMapForm } from './map-form.component';
 
 /*
 * TODO
