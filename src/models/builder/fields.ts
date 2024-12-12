@@ -1,4 +1,4 @@
-import { camelCaseToHuman } from '../utils';
+import { camelCaseToHuman } from '../../utils';
 
 export const textType = (option: any) => {
   return {

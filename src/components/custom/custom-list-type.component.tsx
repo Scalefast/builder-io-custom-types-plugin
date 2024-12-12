@@ -2,7 +2,7 @@
 import { jsx } from '@emotion/core';
 import { CustomApplicationContext, CustomMapOptions, CustomValue, SFComponent } from '../../models';
 import { Column, Row } from '../../utils';
-import { FromType } from './form-comps';
+import { FromType } from './custom-form.component';
 import { Button } from '@material-ui/core';
 import { Clear as ClearIcon } from '@material-ui/icons';
 import { useEffect, useState } from 'react';

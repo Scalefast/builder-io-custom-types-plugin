@@ -1,6 +1,6 @@
 import { CustomApplicationContext } from './custom-application-context';
-import { CustomMapOptions } from './custom-map';
-import { CustomValue } from './page-components';
+import { CustomMapOptions } from '../esw-custom-types';
+import { CustomValue } from '../custom-component.model';
 
 export type FormTypeProps = {
   value: CustomMapOptions;

@@ -1,4 +1,4 @@
-import { CustomApplicationContext } from './custom-application-context';
+import { CustomApplicationContext } from "./custom-application-context";
 
 export interface CustomEditorProps<ValueType> {
   context: CustomApplicationContext;
