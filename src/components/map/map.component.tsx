@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import { useObserver } from 'mobx-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@material-ui/core';
 import { CustomEditorProps, CustomMapOptions } from '../../models';
 import { Row } from '../../utils';
@@ -11,7 +11,7 @@ import { CustomMapForm } from './map-form.component';
 * TODO
 * Avoid duplicated keys
 */
-export const CustomMap = (props: CustomEditorProps<any | undefined>) => {
+export const CustomMapEditor = (props: CustomEditorProps<any | undefined>) => {
   const initialValue = props.value ? props.value.map((opt: any) => opt.toJSON()) : [];
   const [ options, setOptions ] = useState<CustomMapOptions[]>(initialValue);
   const { context } = props;

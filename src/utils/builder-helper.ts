@@ -1,7 +1,7 @@
 import appState from '@builder.io/app-context';
 import pkg from '../../package.json';
-import { Model } from '../models';
-import { Builder } from '@builder.io/sdk';
+import { CustomMapOptions, Model, SFComponentOptions } from '../models';
+import { Builder, BuilderContent } from '@builder.io/sdk';
 
 export type ContentAction = {
   label: string;
@@ -49,3 +49,14 @@ export const pluginConfig = () => {
 export const registerContentAction = (contentAction: ContentAction) => {
   Builder.register('content.action', contentAction);
 }
+
+export const transformComponents = (fetchedComps: BuilderContent[]): SFComponentOptions[] => {
+    let listOfComponents: SFComponentOptions[] = [];
+    listOfComponents = fetchedComps.map((comp) => {
+      const id = comp.data?.name ?? '';
+      const options: CustomMapOptions[] = comp.data?.options ?? [];
+      const title = comp.name ?? id;
+      return { id, options, title } as SFComponentOptions;
+    });
+    return listOfComponents;
+  }

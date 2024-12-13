@@ -1,19 +1,11 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import { CustomApplicationContext, CustomMapOptions, CustomValue, SFComponent } from '../../models';
-import { Column, Row } from '../../utils';
-import { FromType } from './custom-form.component';
+import { CustomMapOptions, CustomValue, MenuTypeProps } from '../../../models';
+import { Column, Row } from '../../../utils';
+import { FromType } from '../form/custom-form.component';
 import { Button } from '@material-ui/core';
 import { Clear as ClearIcon } from '@material-ui/icons';
 import { useEffect, useState } from 'react';
-
-type MenuTypeProps = {
-  value: CustomMapOptions;
-  onChange(e: any): void;
-  currentValue: SFComponent | undefined;
-  context: CustomApplicationContext,
-  renderEditor: any,
-};
 
 export const ListType = (props: MenuTypeProps) => {
   const currentValue = formatCurrentValue();

@@ -1,6 +1,6 @@
 import { Builder } from '@builder.io/react';
 import appState from '@builder.io/app-context';
-import { CustomComponent, CustomMap } from './components';
+import { CustomComponentEditor, CustomMapEditor } from './components';
 import { findModelById, pluginConfig } from './utils';
 
 interface ContentEditorActions {
@@ -22,12 +22,12 @@ export const onContentEditorLoad = ({ safeReaction, updatePreviewUrl }: ContentE
 
   Builder.registerEditor({
     name: 'Custom Page Component',
-    component: CustomComponent,
+    component: CustomComponentEditor,
   });
 
   Builder.registerEditor({
     name: 'Custom Map',
-    component: CustomMap,
+    component: CustomMapEditor,
   });
 
   // safeReaction(

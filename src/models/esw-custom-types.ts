@@ -1,3 +1,6 @@
+import { CustomApplicationContext } from "./builder/custom-application-context";
+import { SFComponent } from "./custom-component.model";
+
 export interface CustomMapOptions {
   key: string,
   type: string,
@@ -16,3 +19,24 @@ export const CustomTypes: CustomMapOptions[] = [
   { key: 'reference', type: 'Reference', required: false, helperText: '' },
   { key: 'assets_image', type: 'Assets Image', required: false, helperText: '' },
 ];
+
+export interface CustomMapFormProps {
+  opt: CustomMapOptions;
+  onChange(action: string, index: number, newValue?: CustomMapOptions): void;
+  index: number;
+  context: CustomApplicationContext,
+}
+
+export type MenuTypeProps = {
+  value: CustomMapOptions;
+  onChange(e: any): void;
+  currentValue: SFComponent | undefined;
+  context: CustomApplicationContext,
+  renderEditor: any,
+};
+
+export type TypeMapProps = {
+  id: string,
+  onChange(e: any): void;
+  currentValue: CustomMapOptions
+}

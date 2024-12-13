@@ -1,7 +1,7 @@
-import { CustomMapOptions } from './custom-map';
+import { CustomMapOptions } from './esw-custom-types';
 export type CustomValue = string | boolean | number | {
     [key: string]: CustomValue;
-};
+} | Record<string, any>;
 export interface SFComponentOptions {
     id: string;
     title: string;
@@ -11,12 +11,11 @@ export interface SFComponent {
     id: string;
     title: string;
     options: {
-      [key: string]: CustomValue;
+        [key: string]: CustomValue;
     };
     toJSON(): any;
 }
 export interface SFComponentState {
-    currentValue: SFComponent | undefined;
     customPageComps: SFComponentOptions[];
     selectedComponent: SFComponentOptions | undefined;
     selectedId: string;

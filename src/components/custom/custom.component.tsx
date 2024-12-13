@@ -1,7 +1,6 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import { useObserver } from 'mobx-react';
-import { BuilderContent } from '@builder.io/sdk';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import {
@@ -18,39 +17,13 @@ import {
   selectType,
   textType,
 } from '../../models';
-import { CenterRow, Column, fastClone } from '../../utils';
+import { CenterRow, Column, fastClone, transformComponents } from '../../utils';
 import ApiService from '../../services/api.service';
-import { ListType } from './custom-list-type.component';
+import { ListType } from './list-type/custom-list-type.component';
 import { IObjectDidChange, observable, observe } from 'mobx';
+import { customComponentsReducer } from './custom-reduer.component';
 
-const actionMap: any = {
-  set_selected_component: (state: SFComponentState, action: any) => ({
-    ...state,
-    selectedComponent: action.selectedComponent,
-  }),
-  set_list_components: (state: SFComponentState, action: any) => ({
-    ...state,
-    customPageComps: action.customPageComps,
-  }),
-  set_list_components_and_selected: (state: SFComponentState, action: any) => ({
-    ...state,
-    customPageComps: action.customPageComps,
-    selectedComponent: action.selectedComponent,
-  }),
-  set_type_change: (state: SFComponentState, action: any) => ({
-    ...state,
-    selectedId: action.selectedId,
-    selectedComponent: action.selectedComponent,
-  }),
-};
-
-const reducer = (state: SFComponentState, action: any) => {
-  const handler = actionMap[action.type] ?? null;
-
-  return handler ? handler(state, action) : state;
-};
-
-export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined>) => {
+export const CustomComponentEditor = (props: CustomEditorProps<SFComponent | undefined>) => {
   const { context } = props;
   const apiService = new ApiService();
   const value = props.value ? props.value.toJSON() : undefined;
@@ -61,7 +34,7 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
     selectedId: initialSelectedId,
   } as SFComponentState;
   const isInitialRender = useRef(true);
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(customComponentsReducer, initialState);
   const [currentValue, setCurrentValue] = useState<SFComponent | undefined>(value);
   const optionsObject = observable.map({}, { deep: false });
 
@@ -116,17 +89,6 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
     observe(optionsObject, observeChanges);
   }
 
-  function transformComponents(fetchedComps: BuilderContent[]): SFComponentOptions[] {
-    let listOfComponents: SFComponentOptions[] = [];
-    listOfComponents = fetchedComps.map((comp) => {
-      const id = comp.data?.name ?? '';
-      const options: CustomMapOptions[] = comp.data?.options ?? [];
-      const title = comp.name ?? id;
-      return { id, options, title } as SFComponentOptions;
-    });
-    return listOfComponents;
-  }
-
   function handleChange(e: any) {
     const selected = state.customPageComps.find((c: SFComponentOptions) => c.id == e.target.value);
     if (selected) {
@@ -162,19 +124,6 @@ export const CustomComponent = (props: CustomEditorProps<SFComponent | undefined
           ...prevValue.options,
           [key]: value,
         }
-      };
-    });
-  }
-
-  function handleOptionUpdate(opts: any): void {
-    setCurrentValue((prevValue) => {
-      if (!prevValue) {
-        return prevValue;
-      }
-
-      return {
-        ...prevValue,
-        options: opts
       };
     });
   }

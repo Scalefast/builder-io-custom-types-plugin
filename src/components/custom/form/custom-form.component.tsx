@@ -1,8 +1,8 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import { FormControl, TextField } from '@material-ui/core';
-import { FormTypeProps } from '../../models';
-import { camelCaseToHuman } from '../../utils';
+import { FormTypeProps } from '../../../models';
+import { camelCaseToHuman } from '../../../utils';
 
 export const FromType = (props: FormTypeProps) => {
   return (

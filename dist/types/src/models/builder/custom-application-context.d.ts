@@ -1,8 +1,7 @@
-/// <reference types="react" />
 import { BuilderContent, Input, BuilderElement, Component } from '@builder.io/sdk';
 type Content = BuilderContent | ContentModel;
 /**
- * Content model is a wrapped content JSON obejct with some
+ * Content model is a wrapped content JSON object with some
  * additional methods and a few other differences
  */
 interface ContentModel extends BuilderContent {
@@ -13,7 +12,7 @@ interface ContentModel extends BuilderContent {
      */
     url?: string;
     /**
-     * A flattened list, good for doing operations on all layers in a builer
+     * A flattened list, good for doing operations on all layers in a builder
      * page or content
      *
      * @example
@@ -40,7 +39,10 @@ export interface ExtendedArray<T = any> extends Array<T> {
 export type Model = {
     id: string;
     name: string;
-    fields: ExtendedArray<Input>;
+    displayName: string;
+    kind: string;
+    fields?: ExtendedArray<Input>;
+    archived?: boolean;
 };
 export interface HttpCacheValue<ValueType = any> {
     loading: boolean;
@@ -51,7 +53,7 @@ export interface BuilderUser {
     id: string;
     email: string;
 }
-export interface ApplicationContext {
+export interface CustomApplicationContext {
     createContent(modelName: string, data: Partial<BuilderContent>): Promise<BuilderContent>;
     user: {
         id: string;
@@ -69,9 +71,10 @@ export interface ApplicationContext {
     };
     httpCache: {
         /**
-         * Fetch content from an API with basic caching, e.g. for react rerenders
+         * Fetch content from an API with basic caching, e.g. for react re-renders
          */
         get<ResponseType = any>(url: string, options?: RequestInit): HttpCacheValue<ResponseType>;
+        getAsync<ResponseType = any>(url: string, options?: RequestInit): Promise<HttpCacheValue<ResponseType>>;
     };
     dialogs: {
         /** Show a simple prompt dialog asking for a text input */
@@ -141,7 +144,7 @@ export interface ApplicationContext {
          *   )
          * @returns a promise that resolves to a function to close the dialogs
          */
-        openDialog(element: JSX.Element): Promise<() => void>;
+        openDialog(element: any): Promise<() => void>;
     };
     location: {
         /**
@@ -155,5 +158,11 @@ export interface ApplicationContext {
          */
         pathname: string;
     };
+}
+export interface OnSaveActions {
+    updateSettings(partal: Record<string, any>): Promise<void>;
+}
+export interface AppActions {
+    triggerSettingsDialog(pluginId: string): Promise<void>;
 }
 export {};
