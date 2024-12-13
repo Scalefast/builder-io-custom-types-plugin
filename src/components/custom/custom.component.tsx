@@ -39,7 +39,7 @@ export const CustomComponentEditor = (props: CustomEditorProps<SFComponent | und
   const optionsObject = observable.map({}, { deep: false });
 
   async function getModels() {
-    const params = `query.published.$eq=published&limit=50&cachebust=true&fields=data,id`;
+    const params = `query.published.$eq=published&limit=50&cachebust=true&fields=data,id,name`;
     const fetchedComps = await apiService.getModel('page-components', context, params);
     let result = Array.isArray(fetchedComps.results) ? transformComponents(fetchedComps.results) : [];
     result = result.concat(defaultComponents);
