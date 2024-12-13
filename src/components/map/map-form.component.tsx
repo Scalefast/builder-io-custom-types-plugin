@@ -84,7 +84,7 @@ export const CustomMapForm = (props: CustomMapFormProps) => {
   }
 
   function handleReferenceModel(value: string): void {
-    const model = models.find((m) => m.id == value);
+    const model = models.find((m) => m.name == value);
     if (model) {
       dispatch({
         type: 'set_extra_options',

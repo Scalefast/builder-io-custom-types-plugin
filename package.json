@@ -1,6 +1,6 @@
 {
   "name": "@scalefast/builder.io",
-  "version": "0.0.55",
+  "version": "0.0.56",
   "description": "",
   "entry": "plugin",
   "output": "plugin.system.js",
