@@ -4,31 +4,29 @@ const pkg = require('./package.json');
 
 module.exports = {
   entry: `./src/${pkg.entry}.tsx`,
-  externals: {
-    // Only the below modules should be listed, these are the dependencies shared with
-    // the Builder.io webapp
-    react: 'react',
-    'react-dom': 'react-dom',
-    '@builder.io/sdk': '@builder.io/sdk',
-    '@builder.io/react': '@builder.io/react',
-    '@emotion/core': '@emotion/core',
-    '@emotion/styled': '@emotion/styled',
-    mobx: 'mobx',
-    'mobx-state-tree': 'mobx-state-tree',
-    'mobx-react': 'mobx-react',
-    '@builder.io/app-context': '@builder.io/app-context',
-    '@material-ui/core': '@material-ui/core',
-    '@material-ui/icons': '@material-ui/icons',
-    '@emotion/styled': '@emotion/styled',
-    ses: 'ses',
-  },
+  externals: [
+    'react',
+    'react-dom',
+    'mobx',
+    'ses',
+    'mobx-state-tree',
+    'mobx-react',
+    '@builder.io/sdk',
+    '@builder.io/react',
+    '@builder.io/app-context',
+    '@emotion/core',
+    '@emotion/styled',
+    '@material-ui/core',
+    '@material-ui/icons',
+    '@emotion/styled',
+  ],
   output: {
     filename: pkg.output,
     path: path.resolve(__dirname, 'dist'),
     libraryTarget: 'system',
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.css'],
   },
   module: {
     rules: [
